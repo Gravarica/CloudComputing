@@ -38,7 +38,7 @@ services:
       retries: 5
 
   central:
-    build: ./CentralLibrary
+    build: mgravara/centrallibrary:0.0.1
     container_name: central_app
     environment:
       - ConnectionStrings__LibraryDbContext=server=mysql_db;database=central;user=appuser;password=root
@@ -51,7 +51,7 @@ services:
         condition: service_healthy
 
   city:
-    build: ./CityLibrary
+    image: mgravara/citylibrary:0.0.1
     container_name: city
     environment:
       - CENTRAL_APP_BASE_URL=http://central_app:8080

@@ -45,6 +45,7 @@ services:
     restart: always
     ports:
       - 5292:5292
+      - 8083:8080
     depends_on:
       mysql_db:
         condition: service_healthy
@@ -53,7 +54,7 @@ services:
     build: ./CityLibrary
     container_name: city
     environment:
-      - CENTRAL_APP_BASE_URL=http://central:5292
+      - CENTRAL_APP_BASE_URL=http://central_app:8080
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/city_db
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=root

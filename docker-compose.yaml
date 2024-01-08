@@ -37,6 +37,33 @@ services:
       timeout: 5s
       retries: 5
 
+  central:
+    build: ./CentralLibrary
+    container_name: central_app
+    environment:
+      - ConnectionStrings__LibraryDbContext=server=mysql_db;database=central;user=appuser;password=root
+    restart: always
+    ports:
+      - 5292:5292
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+  city:
+    build: ./CityLibrary
+    container_name: city
+    environment:
+      - CENTRAL_APP_BASE_URL=http://central:5292
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/city_db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=root
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
 volumes:
   mysql_data:
   postgres_data:

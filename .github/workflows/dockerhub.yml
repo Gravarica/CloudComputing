@@ -30,7 +30,7 @@ jobs:
         context: ./CentralLibrary
         file: ./CentralLibrary/Dockerfile
         push: true
-        tags: gravara/centrallibrary:${{ steps.version.outputs.version }}
+        tags: mgravara/centrallibrary:${{ steps.version.outputs.version }}
 
     - name: Build and Push CityLibrary Image
       uses: docker/build-push-action@v2
@@ -38,4 +38,4 @@ jobs:
         context: ./CityLibrary
         file: ./CityLibrary/Dockerfile
         push: true
-        tags: gravara/citylibrary:${{ steps.version.outputs.version }}
+        tags: mgravara/citylibrary:${{ steps.version.outputs.version }}

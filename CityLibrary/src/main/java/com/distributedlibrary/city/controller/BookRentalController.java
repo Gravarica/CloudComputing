@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 
@@ -20,26 +21,36 @@ public class BookRentalController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterDTO dto){
-        final var response = service.register(dto);
-        return  response ?
-                ResponseEntity.status(HttpStatus.OK).body("Account successfully created!"):
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Account creation canceled.");
+        try {
+            final var response = service.register(dto);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (RestClientException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/rent")
     public ResponseEntity<?> rentBook(@RequestBody RentalDTO dto){
-        final var response = service.rentBook(dto);
-        return  response ?
-                ResponseEntity.status(HttpStatus.OK).body("Book successfully rented!"):
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Book rental canceled.");
+        try {
+            final var response = service.rentBook(dto);
+            return  response ?
+                    ResponseEntity.status(HttpStatus.OK).body("Book successfully rented!"):
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body("Specified book is already given away.");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @PostMapping("/return")
     public ResponseEntity<?> returnBook(@RequestBody ReturnDTO dto){
-        final var response = service.returnBook(dto);
-        return  response ?
-                ResponseEntity.status(HttpStatus.OK).body("Book successfully returned!"):
-                ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Book rental cancellation failed.");
+        try {
+            final var response = service.returnBook(dto);
+            return  response ?
+                    ResponseEntity.status(HttpStatus.OK).body("Book successfully returned!"):
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).body("Specified book doesn't exist.");
+        } catch (RestClientException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/all")

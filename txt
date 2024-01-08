@@ -1,0 +1,45 @@
+private void SeedInitialData(MigrationBuilder migrationBuilder)
+{
+    var random = new Random();
+
+    var names = new List<string> { "Milos", "Petar", "Marko", "Djordje", "Jovan", "Stanko", "Jelena", "Nevena", "Milica", "Anastasija" };
+    var surnames = new List<string> { "Gravara", "Petrovic", "Markovic", "Djordjevic", "Jovanovic", "Stankovic", "Nikolic", "Miskovic", "Milanovic", "Stanic" };
+
+    var users = Enumerable.Range(1, 10).Select(i => new
+    {
+        Id = Guid.NewGuid(),
+        FirstName = names[random.Next(1, 10)],
+        LastName = surnames[random.Next(1, 10)],
+        JMBG = $"12345{i.ToString().PadLeft(6, '0')}",
+        NumberOfBooksRented = 0,
+        AddressId = Guid.NewGuid(),
+    }).ToArray();
+
+    var addresses = users.Select(u => new
+    {
+        Id = u.AddressId,
+        City = $"City{random.Next(1, 10)}",
+        Country = $"Country{random.Next(1, 10)}",
+        Street = $"Street{random.Next(1, 100)}",
+        Number = random.Next(1, 100).ToString()
+    }).ToArray();
+
+    foreach (var a in addresses)
+    {
+        migrationBuilder.InsertData(
+            table: "Addresses",
+            columns: new[] { "Id", "City", "Country", "Street", "Number" },
+            values: new object[] { a.Id, a.City, a.Country, a.Street, a.Number }
+        );
+    }
+
+
+    foreach (var u in users)
+    {
+        migrationBuilder.InsertData(
+           table: "Users",
+           columns: new[] { "Id", "FirstName", "LastName", "JMBG", "BooksRented", "AddressId" },
+           values: new object[] { u.Id, u.FirstName, u.LastName, u.JMBG, u.NumberOfBooksRented, u.AddressId }
+       );
+    }
+}

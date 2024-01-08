@@ -22,7 +22,7 @@ jobs:
       uses: docker/login-action@v1
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
     - name: Build and Push CentralLibrary Image
       uses: docker/build-push-action@v2
@@ -30,7 +30,7 @@ jobs:
         context: ./CentralLibrary
         file: ./CentralLibrary/Dockerfile
         push: true
-        tags: gravara/centrallibrary:${{ steps.version.outputs.version }}
+        tags: mgravara/centrallibrary:${{ steps.version.outputs.version }}
 
     - name: Build and Push CityLibrary Image
       uses: docker/build-push-action@v2
@@ -38,4 +38,4 @@ jobs:
         context: ./CityLibrary
         file: ./CityLibrary/Dockerfile
         push: true
-        tags: gravara/citylibrary:${{ steps.version.outputs.version }}
+        tags: mgravara/citylibrary:${{ steps.version.outputs.version }}

@@ -33,5 +33,21 @@ namespace CentralLibrary.Model
             NumberOfBooksRented=numberOfBooksRented;
             Address=address;
         }
+
+        public bool RentBook()
+        {
+            if (NumberOfBooksRented >= 3) return false;
+
+            NumberOfBooksRented++;
+            return true;
+        }
+
+        public bool ReturnBook()
+        {
+            if (NumberOfBooksRented == 0) return false;
+
+            NumberOfBooksRented--;
+            return true;
+        }
     }
 }

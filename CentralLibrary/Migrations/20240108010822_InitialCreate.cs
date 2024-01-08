@@ -103,7 +103,6 @@ namespace CentralLibrary.Migrations
                 );
             }
 
-
             foreach (var u in users)
             {
                 migrationBuilder.InsertData(

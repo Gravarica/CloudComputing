@@ -1,18 +1,19 @@
+using CentralLibrary.Mapper;
+using CentralLibrary.Repository;
+using CentralLibrary.Repository.Base;
+using CentralLibrary.Service;
+using CentralLibrary.Service.Base;
 using CentralLibrary.Settings;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("LibraryDbContext");
 
 Console.WriteLine(connectionString);
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddDbContext<LibraryDbContext>(options =>
     options.UseMySql(
@@ -25,9 +26,16 @@ builder.Services.AddDbContext<LibraryDbContext>(options =>
         )
     ));
 
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>();
+
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

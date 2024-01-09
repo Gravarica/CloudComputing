@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /mysql-pv/data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: central-library-pod
+  labels:
+    app: central-app
+spec:
+  volumes:
+    - name: mysql-data
+      persistentVolumeClaim:
+        claimName: mysql-pvc
+  containers:
+    - name: central-app
+      image: mgravara/centrallibrary:0.0.1
+      ports: 
+      - containerPort: 8080
+      env:
+      - name: ConnectionStrings__LibraryDbContext
+        value: "server=localhost;database=central;user=appuser;password=root"
+    - name: mysql-db
+      image: mysql:latest
+      ports:
+      - containerPort: 3306
+      volumeMounts:
+      - mountPath: "/var/lib/mysql" 
+        name: mysql-data
+      env: 
+      - name: MYSQL_DATABASE
+        value: "central"
+      - name: MYSQL_USER
+        value: "appuser" 
+      - name: MYSQL_PASSWORD 
+        value: "root"
+      - name: MYSQL_ROOT_PASSWORD
+        value: "root"

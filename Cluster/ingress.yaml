@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: library-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/central"
+        backend:
+          service:
+            name: central-library-service
+            port: 
+              number: 8080
+      - pathType: Prefix
+        path: "/city-ns"
+        backend:
+          service:
+            name: city-library-ns-service
+            port: 
+              number: 8081
+      - pathType: Prefix
+        path: "/city-bg"
+        backend:
+          service:
+            name: city-library-bg-service
+            port: 
+              number: 8081
+      - pathType: Prefix
+        path: "/city-ni"
+        backend:
+          service:
+            name: city-library-ni-service
+            port: 
+              number: 8081

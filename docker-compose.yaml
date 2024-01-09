@@ -20,9 +20,9 @@ services:
       timeout: 5s
       retries: 5
 
-  postgres_db:
+  postgres_db-ns:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: postgres_db-ns
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: root
@@ -30,9 +30,55 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data-ns:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U user -d city_db -h localhost" ]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U user -d city_db -h localhost"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres_db-bg:
+    image: postgres:latest
+    container_name: postgres_db-bg
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: city_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data-bg:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U user -d city_db -h localhost"
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres_db-ni:
+    image: postgres:latest
+    container_name: postgres_db-ni
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: city_db
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data-ni:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U user -d city_db -h localhost"
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -50,21 +96,53 @@ services:
       mysql_db:
         condition: service_healthy
 
-  city:
+  city-ns:
     image: mgravara/citylibrary:0.0.1
-    container_name: city
+    container_name: city-ns
     environment:
       - CENTRAL_APP_BASE_URL=http://central_app:8080
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/city_db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db-ns/city_db
       - SPRING_DATASOURCE_USERNAME=user
       - SPRING_DATASOURCE_PASSWORD=root
     restart: always
     ports:
       - 8081:8081
     depends_on:
-      postgres_db:
+      postgres_db-ns:
+        condition: service_healthy
+
+  city-bg:
+    image: mgravara/citylibrary:0.0.1
+    container_name: city-bg
+    environment:
+      - CENTRAL_APP_BASE_URL=http://central_app:8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db-bg/city_db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=root
+    restart: always
+    ports:
+      - 8082:8081
+    depends_on:
+      postgres_db-bg:
+        condition: service_healthy
+
+  city-ni:
+    image: mgravara/citylibrary:0.0.1
+    container_name: city-ni
+    environment:
+      - CENTRAL_APP_BASE_URL=http://central_app:8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db-ni/city_db
+      - SPRING_DATASOURCE_USERNAME=user
+      - SPRING_DATASOURCE_PASSWORD=root
+    restart: always
+    ports:
+      - 8084:8081
+    depends_on:
+      postgres_db-ni:
         condition: service_healthy
 
 volumes:
   mysql_data:
-  postgres_data:
+  postgres_data-ns:
+  postgres_data-bg:
+  postgres_data-ni:

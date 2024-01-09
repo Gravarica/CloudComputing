@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: postgres-ns-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /postgres-ns-pv/data
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-ns-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: city-library-ns-pod
+  labels:
+    app: city-ns-app
+spec:
+  volumes:
+    - name: postgres-ns
+      persistentVolumeClaim:
+        claimName: postgres-ns-pvc
+  containers:
+    - name: city-ns
+      image: mgravara/citylibrary:0.0.1
+      ports: 
+      - containerPort: 8081
+      env:
+      - name: CENTRAL_APP_BASE_URL
+        value: http://central-library-service:8080
+      - name: SPRING_DATASOURCE_URL
+        value: jdbc:postgresql://localhost/city_db
+      - name: SPRING_DATASOURCE_USERNAME
+        value: user
+      - name: SPRING_DATASOURCE_PASSWORD
+        value: root
+    - name: postgres-db-ns
+      image: postgres:latest
+      ports:
+      - containerPort: 5432
+      volumeMounts:
+      - mountPath: "/var/lib/postgresql/data" 
+        name: postgres-ns
+      env: 
+      - name: POSTGRES_USER
+        value: "user"
+      - name: POSTGRES_PASSWORD
+        value: "root" 
+      - name: POSTGRES_DB 
+        value: "city_db"

@@ -40,7 +40,7 @@ spec:
     - name: central-app
       image: mgravara/centrallibrary:0.0.1
       ports: 
-      - containerPort: 8080
+      - containerPort: 5292
       env:
       - name: ConnectionStrings__LibraryDbContext
         value: "server=localhost;database=central;user=appuser;password=root"

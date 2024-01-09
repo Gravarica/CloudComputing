@@ -12,7 +12,7 @@ spec:
           service:
             name: central-library-service
             port: 
-              number: 8080
+              number: 5292
       - pathType: Prefix
         path: "/city-ns"
         backend:

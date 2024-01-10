@@ -4,7 +4,7 @@ metadata:
   name: city-library-ns-service
 spec:
   selector:
-    app: city-ns-app
+    app-ns: city-ns-app
   ports:
     - protocol: TCP
       port: 8081

@@ -30,7 +30,7 @@ kind: Pod
 metadata:
   name: central-library-pod
   labels:
-    app: central-app
+    app-central: central-app
 spec:
   volumes:
     - name: mysql-data
@@ -40,7 +40,7 @@ spec:
     - name: central-app
       image: mgravara/centrallibrary:0.0.1
       ports: 
-      - containerPort: 5292
+      - containerPort: 8080
       env:
       - name: ConnectionStrings__LibraryDbContext
         value: "server=localhost;database=central;user=appuser;password=root"

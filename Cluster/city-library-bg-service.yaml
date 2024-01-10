@@ -4,7 +4,7 @@ metadata:
   name: city-library-bg-service
 spec:
   selector:
-    app: city-bg-app
+    app-bg: city-bg-app
   ports:
     - protocol: TCP
       port: 8081

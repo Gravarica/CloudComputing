@@ -2,33 +2,37 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: library-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
+  ingressClassName: nginx
   rules:
-  - http:
+  - host: gravara.com
+    http:
       paths:
-      - pathType: Prefix
-        path: "/central"
+      - pathType: ImplementationSpecific
+        path: "/central(/|$)(.*)"
         backend:
           service:
             name: central-library-service
             port: 
-              number: 5292
-      - pathType: Prefix
-        path: "/city-ns"
+              number: 8080
+      - pathType: ImplementationSpecific
+        path: "/city-ns(/|$)(.*)"
         backend:
           service:
             name: city-library-ns-service
             port: 
               number: 8081
-      - pathType: Prefix
-        path: "/city-bg"
+      - pathType: ImplementationSpecific
+        path: "/city-bg(/|$)(.*)"
         backend:
           service:
             name: city-library-bg-service
             port: 
               number: 8081
-      - pathType: Prefix
-        path: "/city-ni"
+      - pathType: ImplementationSpecific
+        path: "/city-ni(/|$)(.*)"
         backend:
           service:
             name: city-library-ni-service

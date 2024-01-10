@@ -30,7 +30,7 @@ kind: Pod
 metadata:
   name: city-library-bg-pod
   labels:
-    app: city-bg-app
+    app-bg: city-bg-app
 spec:
   volumes:
     - name: postgres-bg
@@ -43,7 +43,7 @@ spec:
       - containerPort: 8081
       env:
       - name: CENTRAL_APP_BASE_URL
-        value: http://central-library-service:5292
+        value: http://central-library-service:8080
       - name: SPRING_DATASOURCE_URL
         value: jdbc:postgresql://localhost/city_db
       - name: SPRING_DATASOURCE_USERNAME
